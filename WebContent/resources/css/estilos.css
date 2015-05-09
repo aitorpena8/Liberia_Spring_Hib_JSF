@@ -10,7 +10,6 @@ body {
 
 #wraper {
 	width: 1000px;
-
 	margin: 0 auto;
 	border: 3px solid #48493D;
 	background-color: #F0F2CB;
@@ -92,6 +91,7 @@ section {
 	float: left;
 	margin: 5px 5px;
 	width: 800px;
+	min-height:400px;
 	border: 2px solid #48493D;
 }
 
@@ -121,7 +121,6 @@ input, select label {
 }
 
 #principal {
-	height: 1000px;
 	padding: 5px 10px;
 	margin: 20px auto;
 	width: 756px;
