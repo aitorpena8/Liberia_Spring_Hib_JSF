@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<!-- Definicion de la BBDD como fuente de datos con los parametros obligatorios 
+		para su conexion -->
+
+
+	<bean id="miDataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/libreria" />
+		<property name="username" value="curso" />
+		<property name="password" value="curso" />
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="miDataSource" />
+		<property name="mappingResources">
+			<list>
+				<value>app/mapeos/Libro.hbm.xml</value>
+				<value>app/mapeos/Autor.hbm.xml</value>
+				<value>app/mapeos/Editorial.hbm.xml</value>
+			</list>
+		</property>
+
+		<property name="hibernateProperties">
+
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.connection.pool_size">1</prop>
+				<prop key="hibernate.hbm2ddl.auto">validate</prop>
+				<prop key="hibernate.current_session_context_class">thread</prop>
+				<prop key="hibernate.cache.provider_class">
+					org.hibernate.cache.NoCacheProvider
+				</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="miTemplate" class="org.springframework.orm.hibernate4.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory" />
+
+	</bean>
+
+	<!-- <bean id="template" -->
+	<!-- class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate"> -->
+	<!-- <constructor-arg name="dataSource" ref="miDataSource" /> -->
+	<!-- </bean> -->
+
+	<!-- Definicion declarativa de transacciones para las funciones DAO que 
+		modifican la BBDD -->
+	<!-- <bean id="txManager" -->
+	<!-- class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> -->
+	<!-- <property name="dataSource" ref="miDataSource"></property> -->
+	<!-- </bean> -->
+
+	<!-- <tx:advice id="txAdvice" transaction-manager="txManager"> -->
+	<!-- <tx:attributes> -->
+	<!-- <tx:method name="altaLibro" propagation="REQUIRED" -->
+	<!-- isolation="SERIALIZABLE" rollback-for="Exception" /> -->
+
+	<!-- <tx:method name="modificarLibro" propagation="REQUIRED" -->
+	<!-- isolation="SERIALIZABLE" rollback-for="Exception" /> -->
+
+
+	<!-- <tx:method name="eliminarLibro" propagation="REQUIRED" -->
+	<!-- isolation="SERIALIZABLE" rollback-for="Exception" /> -->
+	<!-- </tx:attributes> -->
+	<!-- </tx:advice> -->
+
+	<!-- <aop:config> -->
+	<!-- <aop:advisor pointcut="execution (* *..LibrosDAO.*(..))" -->
+	<!-- advice-ref="txAdvice" /> -->
+	<!-- </aop:config> -->
+
+
+
+	<!-- <bean id="mapeador" class="app.persistencia.MapeadorLibro" /> -->
+
+	<bean id="miDAO" class="app.persistencia.LibrosDAO" init-method="inicializa"
+		destroy-method="libera">
+		<property name="plantilla" ref="miTemplate" />
+
+	</bean>
+
+	<bean id="gestor" class="app.negocio.GestionLibreria">
+		<property name="librosDAO" ref="miDAO" />
+	</bean>
+	<bean id="nlibro" class="app.modelo.Libro"></bean>
+	<bean id="nautor" class="app.modelo.Autor"></bean>
+	<bean id="ndireccion" class="app.modelo.Direccion"></bean>
+	<bean id="neditorial" class="app.modelo.Editorial">
+		<property name="direccion" ref="ndireccion"></property>
+	</bean>
+
+
+
+
+	<bean id="libreriaBean" class="app.web.LibreriaBean">
+		<property name="gestionLibreria" ref="gestor"></property>
+		<property name="libro" ref="nlibro"></property>
+		<property name="autor" ref="nautor"></property>
+		<property name="editorial" ref="neditorial"></property>
+	</bean>
+
+
+
+
+	<!-- Declaración de Beans de ejemplo -->
+
+
+	<bean id="direccion1" class="app.modelo.Direccion" p:calle="lutxana"
+		p:numero="2" p:poblacion="Bilbao" p:provincia="Bizkaia" p:cp="48014" />
+	<bean id="direccion2" class="app.modelo.Direccion" p:calle="Las Ramblas"
+		p:numero="40" p:poblacion="Barcelona" p:provincia="Barcelona" p:cp="60000" />
+	<bean id="direccion3" class="app.modelo.Direccion" p:calle="Gran Via"
+		p:numero="10" p:poblacion="Madrid" p:provincia="Madrid" p:cp="1000" />
+
+	<bean id="editorial1" class="app.modelo.Editorial" p:nombre="Debolsillo"
+		p:nif="6767" p:direccion-ref="direccion1" />
+	<bean id="editorial2" class="app.modelo.Editorial" p:nombre="Grijalbo"
+		p:nif="48839" p:direccion-ref="direccion2" />
+	<bean id="editorial3" class="app.modelo.Editorial" p:nombre="Planeta"
+		p:nif="1232" p:direccion-ref="direccion3" />
+
+	<bean id="autor1" class="app.modelo.Autor" p:nombre="Patrick Rothfuss"
+		p:nacionalidad="Ingles" p:comentarios="blalblala" />
+	<bean id="autor2" class="app.modelo.Autor" p:nombre="E.L. James"
+		p:nacionalidad="Estados Unidos" p:comentarios="birlerer" />
+	<bean id="autor3" class="app.modelo.Autor" p:nombre="Carlos Ruiz Zafón"
+		p:nacionalidad="España" p:comentarios="fifuifif" />
+
+
+	<bean id="libro1" class="app.modelo.Libro" p:isbn="987-84-9908-247-9"
+		p:titulo="El nombre del viento" p:editorial-ref="editorial1"
+		p:publicacion="882479" p:precio="10.0">
+		<property name="autores">
+			<set>
+				<ref bean="autor1" />
+			</set>
+		</property>
+	</bean>
+	<bean id="libro2" class="app.modelo.Libro" p:isbn="987-84-9989-961-9"
+		p:titulo="El temor de un hombre sabio" p:editorial-ref="editorial1"
+		p:publicacion="999619" p:precio="10.0">
+		<property name="autores">
+			<set>
+				<ref bean="autor1" />
+			</set>
+		</property>
+	</bean>
+	<bean id="libro3" class="app.modelo.Libro" p:isbn="978-84-253-4883-9"
+		p:titulo="Cincuenta sombras de Grey" p:editorial-ref="editorial2"
+		p:publicacion="48839" p:precio="8.0">
+		<property name="autores">
+			<set>
+				<ref bean="autor2" />
+			</set>
+		</property>
+	</bean>
+	<bean id="libro4" class="app.modelo.Libro" p:isbn="978-84-08-09310-7"
+		p:titulo="La sombra del Viento" p:editorial-ref="editorial3"
+		p:publicacion="48835" p:precio="12.0">
+		<property name="autores">
+			<set>
+				<ref bean="autor3" />
+			</set>
+		</property>
+	</bean>
+
+	<bean id="interceptor" class="app.utilidades.Interceptor" />
+	<aop:config>
+		<!-- Declaracion del AOP a ejecutar al insertar exitosamente un libro en 
+			la BBDD -->
+		<aop:pointcut id="altaLibroPC"
+			expression="execution(* app.persistencia.LibrosDAO.altaLibro(..)) 
+		and args(libro)" />
+		<aop:aspect ref="interceptor">
+			<aop:after-returning pointcut-ref="altaLibroPC"
+				method="interceptarAltaLibro" arg-names="libro" />
+		</aop:aspect>
+	</aop:config>
+
+
+
+
+
+</beans>

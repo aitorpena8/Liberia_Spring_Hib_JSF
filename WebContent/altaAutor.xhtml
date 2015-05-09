@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<f:view locale="#{idiomaBean.locale}">
+	<h:head>
+		<title>#{msg.libreria} - #{msg.pagina_insertarAutor}</title>
+		<h:outputStylesheet library="css" name="estilos.css">
+		</h:outputStylesheet>
+
+	</h:head>
+	<body>
+			#{libreriaBean.inicializa()}
+		<div id="wraper">
+			<header>
+			<h1>#{msg.libreria}</h1>
+			
+				<div id="idioma">
+				<h:form>
+					<h:commandLink action="#{idiomaBean.cambiarIdioma('es')}">
+						<h:graphicImage value="#{idiomaBean.getLocaleImgURL('es',false)}"
+							onmouseover="chngImg(this,#{idiomaBean.getLocale4JS()},true)"
+							onmouseout="chngImg(this,#{idiomaBean.getLocale4JS()},false)" />
+						<f:ajax render="@all"></f:ajax>
+
+					</h:commandLink>
+
+					<h:commandLink action="#{idiomaBean.cambiarIdioma('en')}">
+						<h:graphicImage value="#{idiomaBean.getLocaleImgURL('en',false)}"
+							onmouseover="chngImg(this,#{idiomaBean.getLocale4JS()},true)"
+							onmouseout="chngImg(this,#{idiomaBean.getLocale4JS()},false)" />
+						<f:ajax render="@all"></f:ajax>
+
+					</h:commandLink>
+
+					<h:commandLink action="#{idiomaBean.cambiarIdioma('eu')}">
+						<h:graphicImage value="#{idiomaBean.getLocaleImgURL('eu',false)}"
+							onmouseover="chngImg(this,#{idiomaBean.getLocale4JS()},true)"
+							onmouseout="chngImg(this,#{idiomaBean.getLocale4JS()},false)" />
+						<f:ajax render="@all"></f:ajax>
+					</h:commandLink>
+				</h:form>
+			</div>
+			</header>
+			<aside> <h:form>
+				<ul class="menu">
+					<li class="menu"><p>#{msg.menu_libro}</p>
+						<ul>
+							<li class="submenu"><h:commandLink action="altaLibro" redirect="true">#{msg.menu_nuevo_libro} </h:commandLink></li>
+							<li class="submenu"><h:commandLink action="consultaLibro" redirect="true">#{msg.menu_consultar_libro}</h:commandLink></li>
+						</ul></li>
+					<li class="menu"><p>#{msg.menu_autor}</p>
+						<ul class="menu">
+							<li class="submenu"><h:commandLink action="altaAutor" redirect="true">#{msg.menu_nuevo_autor}</h:commandLink></li>
+							<li class="submenu"><h:commandLink action="consultaAutor" redirect="true">#{msg.menu_consultar_autor}</h:commandLink></li>
+
+
+						</ul></li>
+
+
+					<li class="menu"><p>#{msg.menu_editorial}</p>
+						<ul class="menu">
+							<li class="submenu"><h:commandLink action="altaEditorial" redirect="true">#{msg.menu_nueva_editorial}</h:commandLink></li>
+							<li class="submenu"><h:commandLink
+									action="consultaEditorial" redirect="true">#{msg.menu_consultar_editorial}</h:commandLink></li>
+
+
+
+						</ul></li>
+				</ul>
+
+
+			</h:form> </aside>
+			<section>
+
+			<div id="gen">
+				<h1>#{msg.pagina_insertarAutor}</h1>
+				<h:form id="form_insertarAutor">
+					<p>
+						<h:outputLabel value="#{msg.autor_nombre}"></h:outputLabel>
+						<h:inputText id="nombre" value="#{libreriaBean.autor.nombre}"
+							required="true">
+						</h:inputText>
+						<h:message for="nombre"></h:message>
+
+					</p>
+
+
+					<p>
+						<h:outputLabel value="#{msg.autor_nacionalidad}"></h:outputLabel>
+						<h:inputText id="nacionalidad"
+							value="#{libreriaBean.autor.nacionalidad}">
+						</h:inputText>
+
+					</p>
+
+					<p>
+						<h:outputLabel value="#{msg.autor_comentarios}"></h:outputLabel>
+						<h:inputTextarea id="comentarios"
+							value="#{libreriaBean.autor.comentarios}">
+						</h:inputTextarea>
+
+					</p>
+
+					<h:commandButton value="#{msg.alta_boton}" action="#{libreriaBean.altaAutor()}">
+						<f:ajax execute="nombre nacionalidad comentarios"
+							render="form_insertarAutor"></f:ajax>
+
+					</h:commandButton>
+				</h:form>
+
+			</div>
+			</section>
+
+
+			<footer>
+			<p>Aitor Peña Anton &copy;</p>
+			</footer>
+		</div>
+	</body>
+</f:view>
+</html>

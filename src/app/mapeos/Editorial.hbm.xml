@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+  "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+  "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="app.modelo.Editorial" table="editoriales">
+		<id name="nif" column="nif" type="string" />
+
+		<property name="nombre" column="nombre" type="string" />
+		<component name="direccion" class="app.modelo.Direccion">
+			<property name="calle" column="calle" type="string" />
+			<property name="cp" column="cp" type="integer" />
+			<property name="numero" column="numero" type="integer" />
+			<property name="poblacion" column="poblacion" type="string" />
+			<property name="provincia" column="provincia" type="string" />
+		</component>
+		<set name="libros" cascade="all">
+			<key column="EDITORIAL_ID" />
+			<one-to-many class="app.modelo.Libro" />
+		</set>
+
+
+	</class>
+
+</hibernate-mapping>

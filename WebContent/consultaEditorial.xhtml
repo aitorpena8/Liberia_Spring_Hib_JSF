@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<f:view locale="#{idiomaBean.locale}">
+	<h:head>
+
+
+		<title>#{msg.libreria} - #{msg.pagina_consultarEditorial}</title>
+		<h:outputStylesheet library="css" name="estilos.css">
+		</h:outputStylesheet>
+		<script type="text/javascript">
+			function chngImg(obj, loc, over) {
+				var cSrc = obj.src;
+				var pre = cSrc.substr(0, cSrc.lastIndexOf('/')+1);
+				var imgURL = cSrc.substr(cSrc.lastIndexOf('/') + 1);
+				if (!imgURL.contains(loc)) {
+					if (over)
+						obj.src = pre+imgURL.replace("1", "2");
+					else
+						obj.src = pre+imgURL.replace("2", "1");
+				}
+			}
+		</script>
+	</h:head>
+	<body>
+		#{libreriaBean.inicializa()}
+		<div id="wraper">
+			<header>
+			<h1>#{msg.libreria} - #{msg.pagina_consultarEditorial}</h1>
+				<div id="idioma">
+				<h:form>
+					<h:commandLink action="#{idiomaBean.cambiarIdioma('es')}">
+						<h:graphicImage value="#{idiomaBean.getLocaleImgURL('es',false)}"
+							onmouseover="chngImg(this,#{idiomaBean.getLocale4JS()},true)"
+							onmouseout="chngImg(this,#{idiomaBean.getLocale4JS()},false)" />
+						<f:ajax render="@all"></f:ajax>
+
+					</h:commandLink>
+
+					<h:commandLink action="#{idiomaBean.cambiarIdioma('en')}">
+						<h:graphicImage value="#{idiomaBean.getLocaleImgURL('en',false)}"
+							onmouseover="chngImg(this,#{idiomaBean.getLocale4JS()},true)"
+							onmouseout="chngImg(this,#{idiomaBean.getLocale4JS()},false)" />
+						<f:ajax render="@all"></f:ajax>
+
+					</h:commandLink>
+
+					<h:commandLink action="#{idiomaBean.cambiarIdioma('eu')}">
+						<h:graphicImage value="#{idiomaBean.getLocaleImgURL('eu',false)}"
+							onmouseover="chngImg(this,#{idiomaBean.getLocale4JS()},true)"
+							onmouseout="chngImg(this,#{idiomaBean.getLocale4JS()},false)" />
+						<f:ajax render="@all"></f:ajax>
+					</h:commandLink>
+				</h:form>
+			</div>
+			</header>
+			<aside> <h:form>
+				<ul class="menu">
+					<li class="menu"><p>#{msg.menu_libro}</p>
+						<ul>
+							<li class="submenu"><h:commandLink action="altaLibro" redirect="true">#{msg.menu_nuevo_libro} </h:commandLink></li>
+							<li class="submenu"><h:commandLink action="consultaLibro" redirect="true">#{msg.menu_consultar_libro}</h:commandLink></li>
+						</ul></li>
+					<li class="menu"><p>#{msg.menu_autor}</p>
+						<ul class="menu">
+							<li class="submenu"><h:commandLink action="altaAutor" redirect="true">#{msg.menu_nuevo_autor}</h:commandLink></li>
+							<li class="submenu"><h:commandLink action="consultaAutor" redirect="true">#{msg.menu_consultar_autor}</h:commandLink></li>
+
+
+						</ul></li>
+
+
+					<li class="menu"><p>#{msg.menu_editorial}</p>
+						<ul class="menu">
+							<li class="submenu"><h:commandLink action="altaEditorial" redirect="true">#{msg.menu_nueva_editorial}</h:commandLink></li>
+							<li class="submenu"><h:commandLink
+									action="consultaEditorial" redirect="true">#{msg.menu_consultar_editorial}</h:commandLink></li>
+
+
+
+						</ul></li>
+				</ul>
+
+
+			</h:form> </aside>
+			<section>
+
+			<div id="buscar">
+				<h:form id="form_buscarEditorial">
+					<h:outputLabel value="#{msg.editorial_nif}"></h:outputLabel>
+					<h:inputText id="bnif" value="#{libreriaBean.editorial.nif}"
+						styleClass="search" />
+
+
+					<h:outputLabel value="#{msg.editorial_nombre}"></h:outputLabel>
+					<h:inputText id="bnombre" value="#{libreriaBean.editorial.nombre}"
+						styleClass="search" />
+					<h:commandButton id="buscarBtn" value="#{msg.buscar_boton}"
+						action="consultaEditorial">
+						<f:ajax execute="bnif bnombre" render=":form_tabla"></f:ajax>
+
+
+					</h:commandButton>
+
+				</h:form>
+			</div>
+			<div id="principal">
+				<h:form id="form_tabla">
+					<h:dataTable id="tabla_editoriales"
+						value="#{libreriaBean.consultarEditoriales()}" var="editorial">
+
+						<h:column>
+							<f:facet name="header">
+
+								<f:verbatim>#{msg.editorial_nif}</f:verbatim>
+							</f:facet>
+							<h:outputText id="nif" value="#{editorial.nif}"></h:outputText>
+
+						</h:column>
+
+
+						<h:column>
+							<f:facet name="header">
+
+								<f:verbatim>#{msg.editorial_nombre}</f:verbatim>
+							</f:facet>
+							<h:outputText value="#{editorial.nombre}"></h:outputText>
+							<f:facet name="footer">
+							</f:facet>
+						</h:column>
+
+						<h:column>
+							<f:facet name="header">
+								<f:verbatim>#{msg.editorial_direccion}</f:verbatim>
+							</f:facet>
+							<h:outputText value="#{libro.editorial.direccion}"></h:outputText>
+							<f:facet name="footer">
+							</f:facet>
+						</h:column>
+
+
+
+						<h:column rendered="#{libreriaBean.tamListaEditorial   > 0}">
+							<f:facet name="header">
+							</f:facet>
+
+							<!--<h:inputHidden id="isbn" value="#{libro.isbn}"></h:inputHidden> -->
+							<h:commandButton id="eliminar" image="/img/circle-delete1.png"
+								onmouseover="this.src='/etxe/img/circle-delete2.png'"
+								onmouseout="this.src='/etxe/img/circle-delete1.png'"
+								action="#{libreriaBean.eliminarEditorial(editorial.nif)}"
+								onclick="confirm('#{msg.confirmar_eliminar}'+' isbn: #{editorial.nif}');">
+								<f:ajax render=":form_tabla"></f:ajax>
+							</h:commandButton>
+
+							<f:facet name="footer">
+							</f:facet>
+						</h:column>
+
+					</h:dataTable>
+				</h:form>
+
+			</div>
+			</section>
+
+
+			<footer>
+			<p>Aitor Peña Anton &copy;</p>
+			</footer>
+
+		</div>
+
+
+
+
+
+	</body>
+</f:view>
+</html>
